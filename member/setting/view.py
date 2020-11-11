@@ -1,11 +1,12 @@
 from member import app, db
-from flask import render_template, flash
+from flask import render_template, flash, redirect, url_for, request
 from member.setting.model import UserRegister
-from member.setting.form import FormRegister
+from member.setting.form import FormRegister, FormLogin
 from member.sendemail import send_mail
+from flask_login import login_manager
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = FormRegister()
     if form.validate_on_submit():
@@ -46,3 +47,18 @@ def user_confirm(token):
         return render_template('register/successT.html')
     else:
         return render_template('register/failT.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = FormLogin()
+    if form.validate_on_submit():
+        user = UserRegister.query.filter_by(email=form.email.data).first()
+        if user:
+            if user.check_password(form.password.data):
+                return '歡迎登入'
+            else:
+                flash('錯誤的E-mail或密碼')
+        else:
+            flash('錯誤的E-mail或密碼')
+    return render_template('login/login.html', form=form)

@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, SubmitField, validators, PasswordField, ValidationError
+from wtforms import StringField, SubmitField, validators, PasswordField, ValidationError, BooleanField
 from wtforms.fields.html5 import EmailField
 from member.setting.model import UserRegister
 
+# 註冊
 class FormRegister(Form):
     username = StringField('帳號', validators=[
         validators.DataRequired(),
@@ -30,3 +31,20 @@ class FormRegister(Form):
     def validate_username(self, field):
         if UserRegister.query.filter_by(username=field.data).first():
             raise ValidationError('帳號已被註冊 :-<')
+
+
+# 登入
+class FormLogin(Form):
+    email = EmailField('E-mail', validators=[
+        validators.DataRequired(),
+        validators.Length(10,50),
+        validators.Email()
+    ])
+
+    password = PasswordField('密碼', validators=[
+        validators.DataRequired()
+    ])
+
+    remember_me = BooleanField('保持登入狀態')
+
+    submit = SubmitField('登入')
