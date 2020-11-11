@@ -20,8 +20,8 @@ def register():
 
         send_mail(
             sender='陌上花開',
-            recipients=[user.email,],
-            subject='啟用你的帳號',
+            recipients=[user.email],
+            subject='啟用帳號',
             template='mail/welcome',
             mailtype='html',
             user=user,
