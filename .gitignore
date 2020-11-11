@@ -1,0 +1,10 @@
+.env
+__pycache__/config.cpython-38.pyc
+__pycache__/manage.cpython-38.pyc
+member/__pycache__/__init__.cpython-38.pyc
+member/__pycache__/sendemail.cpython-38.pyc
+member/setting/__pycache__/__init__.cpython-38.pyc
+member/setting/__pycache__/form.cpython-38.pyc
+member/setting/__pycache__/model.cpython-38.pyc
+member/setting/__pycache__/view.cpython-38.pyc
+member/static/data/register.sqlite

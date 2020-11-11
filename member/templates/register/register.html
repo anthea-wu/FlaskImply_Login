@@ -1,0 +1,105 @@
+{%extends 'base.html'%}
+{%import 'bootstrap/wtf.html' as wtf%}
+
+
+{%block totle%}註冊頁面{%endblock totle%}
+
+
+{%block head%}
+{{super()}}
+<style>
+    .register {
+        padding-left: 50px;
+        position: relative;
+        color: #212745;
+    }
+
+    .left {
+        margin-top: 100px;
+    }
+
+    h2 {
+        margin-bottom: 30px;
+    }
+
+    h2::before {
+        content: '';
+        display: block;
+        width: 250px;
+        height: 30px;
+        background-color: #DCE1F4;
+        opacity: 0.8;
+        position: absolute;
+        left: 65px;
+        top: 115px;
+        z-index: -1;
+    }
+
+    form {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0;
+    }
+
+    /*每一個欄位名稱+輸入格*/
+    .form-group {
+        display: flex;
+        flex-direction: row;
+    }
+
+    /*每一個欄位名稱*/
+    .control-label {
+        width: 100px;
+        height: 38px;
+        margin-top: 8px;
+    }
+
+    /*提交表單的按鈕*/
+    form .btn-default {
+        background-color: #DCE1F4;
+    }
+
+    .registerFlower {
+        width: 65%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: -2;
+    }
+
+    /*提示字元*/
+    .help-block {
+        position: absolute;
+        right: -120px;
+        margin-top: 8px;
+    }
+    .help-block::before {
+        content: '';
+        display: block;
+        width: 120px;
+        height: 15px;
+        background-color: #DCE1F4;
+        opacity: 0.8;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        z-index: -1;
+    }
+</style>
+{%endblock head%}
+
+
+{%block content%}
+<div class="container register">
+    <div class="left">
+        <h2>註冊一個新的帳號</h2>
+        <div class="form col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='image/register.jpg') }}" class="registerFlower">
+</div>
+
+{%endblock content%}

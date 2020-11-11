@@ -1,0 +1,10 @@
+{%extends 'base.html'%}
+{%import 'bootstrap/wtf.html' as wtf%}
+
+{%block content%}
+<div class="container">
+    <h1>歡迎你！{{ user.username }}。</h1>
+    <h3>請在一天內點選下列網址來啟用你的帳號。</h3>
+    <p>{{ url_for('user_confirm', token=token, _external=True) }}</p>
+</div>
+{%endblock content%}
