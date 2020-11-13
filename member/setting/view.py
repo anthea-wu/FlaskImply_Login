@@ -6,10 +6,13 @@ from member.sendemail import send_mail
 from flask_login import login_user, login_required, current_user, logout_user
 
 
+# 首頁
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
+# 註冊
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = FormRegister()
@@ -38,7 +41,7 @@ def register():
     return render_template('register/register.html', form=form)
 
 
-
+# 使用者認證
 @app.route('/user_confirm/<token>')
 def user_confirm(token):
     user = UserRegister()
@@ -53,6 +56,7 @@ def user_confirm(token):
         return render_template('register/failT.html')
 
 
+# 登入
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = FormLogin()
@@ -75,6 +79,7 @@ def login():
     return render_template('login/login.html', form=form)
 
 
+# 登出
 @app.route('/logout')
 @login_required
 def logout():
@@ -83,11 +88,34 @@ def logout():
     return redirect(url_for('login'))
 
 
+# 會員資料
 @app.route('/userinfo')
 @login_required
 def userinfo():
     return render_template('member/userinfo.html')
 
-@app.route('/hello')
-def hello():
-    return render_template('login/successL.html')
+
+# 確認帳號啟用狀態
+@app.before_request
+def before_request():
+    if current_user.is_authenticated and not current_user.confirm and request.endpoint not in ['re_userconfirm', 'logout', 'user_confirm', 'index'] and request.endpoint!='static' :
+        flash('你的帳號還沒有啟用')
+        return render_template('register/unactivate.html')
+
+
+# 重新寄送認證email
+@app.route('/re_userconfirm')
+@login_required
+def re_userconfirm():
+    token = current_user.create_confirm_token()
+    send_mail(
+        sender='陌上花開',
+        recipients=[current_user.email],
+        subject='啟用帳號',
+        template='mail/welcome',
+        mailtype='html',
+        user=current_user,
+        token=token
+    )
+    flash('請確認你的註冊信箱，點擊網址來啟用帳號')
+    return redirect(url_for('index'))

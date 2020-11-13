@@ -1,0 +1,56 @@
+{%extends 'base.html'%}
+
+
+{%block head%}
+{{super()}}
+<style>
+    .register {
+        padding-left: 50px;
+        position: relative;
+        color: #212745;
+    }
+
+    .left {
+        margin-top: 100px;
+    }
+
+    h2 {
+        margin-bottom: 30px;
+    }
+
+    h2::before {
+        content: '';
+        display: block;
+        width: 215px;
+        height: 30px;
+        background-color: #DCE1F4;
+        opacity: 0.8;
+        position: absolute;
+        left: 65px;
+        top: 115px;
+        z-index: -1;
+    }
+    
+
+    .registerFlower {
+        width: 65%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: -2;
+    }
+</style>
+{%endblock head%}
+
+
+{%block content%}
+<div class="container register">
+    <div class="left">
+        <h2>帳號還沒有啟用</h2>
+        <p>哈囉， {{ current_user.username }}</p>
+        <p>你的帳號還沒有啟用，請在重新寄送啟用email後的1小時內啟用帳號</p>
+        <p><a href="{{ url_for('re_userconfirm') }}">點我重新寄送email</a></p>
+    </div>
+    <img src="{{ url_for('static', filename='image/register.jpg') }}" class="registerFlower">
+</div>
+{%endblock content%}
