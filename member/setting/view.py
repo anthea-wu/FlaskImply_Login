@@ -1,7 +1,7 @@
 from member import app, db, login_manager
 from flask import render_template, flash, redirect, url_for, request, redirect, session
 from member.setting.model import UserRegister
-from member.setting.form import FormRegister, FormLogin
+from member.setting.form import FormRegister, FormLogin, FormChangePWD
 from member.sendemail import send_mail
 from flask_login import login_user, login_required, current_user, logout_user
 
@@ -119,3 +119,20 @@ def re_userconfirm():
     )
     flash('請確認你的註冊信箱，點擊網址來啟用帳號')
     return redirect(url_for('index'))
+
+
+# 更新密碼
+@app.route('/changepwd', methods=['GET', 'POST'])
+@login_required
+def changepwd():
+    form = FormChangePWD()
+    if form.validate_on_submit():
+        if current_user.check_password(form.password_old.data):
+            current_user.password = form.password_new.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('密碼變更成功！請重新登入')
+            return redirect(url_for('logout'))
+        else:
+            flash('錯誤的舊密碼')
+    return render_template('member/changePWD.html', form = form)

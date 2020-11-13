@@ -48,3 +48,22 @@ class FormLogin(Form):
     remember_me = BooleanField('保持登入狀態')
 
     submit = SubmitField('登入')
+
+
+# 變更密碼
+class FormChangePWD(Form):
+    password_old = PasswordField('舊密碼', validators=[
+        validators.DataRequired()
+    ])
+
+    password_new = PasswordField('新密碼', validators=[
+        validators.DataRequired(),
+        validators.Length(10,30),
+        validators.EqualTo('password_new_confirm', message='兩次密碼不相同')
+    ])
+
+    password_new_confirm = PasswordField('確認密碼', validators=[
+        validators.DataRequired()
+    ])
+
+    submit = SubmitField('更換密碼')
