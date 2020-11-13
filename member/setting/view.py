@@ -1,7 +1,7 @@
 from member import app, db, login_manager
 from flask import render_template, flash, redirect, url_for, request, redirect, session
 from member.setting.model import UserRegister
-from member.setting.form import FormRegister, FormLogin, FormChangePWD
+from member.setting.form import FormRegister, FormLogin, FormChangePWD, FormResetPWD_Mail, FormResetPWD
 from member.sendemail import send_mail
 from flask_login import login_user, login_required, current_user, logout_user
 
@@ -136,3 +136,57 @@ def changepwd():
         else:
             flash('錯誤的舊密碼')
     return render_template('member/changePWD.html', form = form)
+
+
+# 申請重設密碼
+@app.route('/resetpwd', methods=['GET', 'POST'])
+def resetpwd():
+    if not current_user.is_anonymous:
+        return redirect(url_for('index'))
+
+    form = FormResetPWD_Mail()
+    if form.validate_on_submit():
+        user = UserRegister.query.filter_by(email=form.email.data).first()
+        if user:
+            token = user.create_confirm_token()
+            send_mail(
+                sender='陌上花開',
+                recipients=[user.email],
+                subject='重設密碼',
+                template='mail/resetPWD',
+                mailtype='html',
+                user=current_user,
+                token=token
+            )
+            flash('重設密碼的email已寄出，請檢查你註冊的email信箱')
+            return redirect(url_for('login'))
+    return render_template('member/resetPWDmail.html', form=form)
+
+
+# 重設密碼
+@app.route('/resetPWD_recive/<token>', methods=['GET', 'POST'])
+def resetPWD_recive(token):
+    if not current_user.is_anonymous:
+        return redirect(url_for('index'))
+    
+    form = FormResetPWD()
+    if form.validate_on_submit():
+        user = UserRegister()
+        data = user.validate_confirm_token(token)
+        print(data)
+        if data:
+            
+            user = UserRegister.query.filter_by(id=data.get('userID')).first()
+            if user:
+                user.password = form.password.data
+                db.session.commit()
+                flash('密碼重設成功！')
+                return redirect(url_for('login'))
+            else:
+                flash
+                flash('搜尋不到用戶名稱')
+                return redirect(url_for('index'))
+        else:
+            flash('認證錯誤！請重新申請一次並在10分鐘內設定新密碼')
+            return redirect(url_for('index'))
+    return render_template('member/resetPWD.html', form=form)

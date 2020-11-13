@@ -20,7 +20,7 @@ class UserRegister(UserMixin, db.Model):
     def password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode('utf8')
 
-    def create_confirm_token(self, expires_in=3600):
+    def create_confirm_token(self, expires_in=600):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'], expires_in=expires_in)
         return s.dumps({'userID': self.id})
 
@@ -36,6 +36,10 @@ class UserRegister(UserMixin, db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    def create_reset_token(self, expires_in=600):
+        s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'], expires_in=expires_in)
+        return s.dumps( {'resetID': self.id} )
         
     def __repr__(self):
         return '帳號：{} email：{}'.format(self.username, self.email)

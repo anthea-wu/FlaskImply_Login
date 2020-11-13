@@ -67,3 +67,33 @@ class FormChangePWD(Form):
     ])
 
     submit = SubmitField('更換密碼')
+
+
+# 申請密碼
+class FormResetPWD_Mail(Form):
+    email = EmailField('註冊信箱', validators=[
+        validators.DataRequired(),
+        validators.Length(10,50),
+        validators.Email()
+    ])
+
+    submit = SubmitField('申請密碼')
+
+    def validate_email(self, field):
+        if not UserRegister.query.filter_by(email=field.data).first():
+            raise ValidationError('錯誤的註冊信箱')
+
+
+# 設置新密碼
+class FormResetPWD(Form):
+    password = PasswordField('新密碼', validators=[
+        validators.DataRequired(),
+        validators.Length(10,30),
+        validators.EqualTo('password_confirm', message='兩次密碼不相同')
+    ])
+
+    password_confirm = PasswordField('確認密碼', validators=[
+        validators.DataRequired()
+    ])
+
+    submit = SubmitField('重新設定密碼')

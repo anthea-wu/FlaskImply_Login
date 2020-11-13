@@ -30,6 +30,14 @@
       margin-top: 30px;
       border: 0px solid #000;
     }
+
+    .registerFlower {
+      width: 65%;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: -2;
+  }
   </style>
 </head>
 
@@ -45,7 +53,10 @@
         <ul class="navbar-nav">
           {% if current_user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('userinfo') }}">會員資料</a>
+            <a class="nav-link" href="{{ url_for('userinfo') }}">用戶資料</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('changepwd') }}">變更密碼</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('logout') }}">登出</a>

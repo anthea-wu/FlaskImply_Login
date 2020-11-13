@@ -41,7 +41,8 @@
     }
 
     /*每一個欄位名稱+輸入格*/
-    .form-group, .checkbox {
+    .form-group,
+    .checkbox {
         display: flex;
         flex-direction: row;
     }
@@ -54,22 +55,39 @@
     }
 
     .checkbox {
-        width: 300px;
+        width: 350px;
+        padding-left: 10px;
         display: flex;
         align-items: center;
+    }
+
+    .form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .forgot {
+        width: 100%;
+        margin-top: 15px;
     }
 
     /*提交表單的按鈕*/
     form .btn-default {
         background-color: #DCE1F4;
+        margin-top: 10px;
     }
 
-    .registerFlower {
-        width: 65%;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: -2;
+    .open {
+        color: #212745;
+        border-radius: .25rem;
+    }
+
+    .open:hover {
+        cursor: pointer;
+        text-decoration: none;
+        color: #4d5579;
     }
 
     /*提示字元*/
@@ -78,6 +96,7 @@
         right: -150px;
         margin-top: 8px;
     }
+
     .help-block::before {
         content: '';
         display: block;
@@ -100,6 +119,9 @@
         <h2>登入系統</h2>
         <div class="form col-md-4">
             {{ wtf.quick_form(form) }}
+            <div class="forgot">
+                <a href="{{ url_for('resetpwd') }}" class="open">忘記密碼？</a>
+            </div>
         </div>
     </div>
     <img src="{{ url_for('static', filename='image/register.jpg') }}" class="registerFlower">
