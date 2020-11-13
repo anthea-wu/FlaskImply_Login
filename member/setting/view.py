@@ -1,10 +1,14 @@
-from member import app, db
-from flask import render_template, flash, redirect, url_for, request
+from member import app, db, login_manager
+from flask import render_template, flash, redirect, url_for, request, redirect, session
 from member.setting.model import UserRegister
 from member.setting.form import FormRegister, FormLogin
 from member.sendemail import send_mail
-from flask_login import login_manager
+from flask_login import login_user, login_required, current_user, logout_user
 
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -52,13 +56,38 @@ def user_confirm(token):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = FormLogin()
-    if form.validate_on_submit():
-        user = UserRegister.query.filter_by(email=form.email.data).first()
-        if user:
-            if user.check_password(form.password.data):
-                return '歡迎登入'
+    if current_user.is_authenticated:
+        flash('你已經登入過帳號了')
+        return redirect(url_for('index'))
+    else:
+        if form.validate_on_submit():
+            user = UserRegister.query.filter_by(email=form.email.data).first()
+            if user:
+                if user.check_password(form.password.data):
+                    session.permanent = True
+                    login_user(user, form.remember_me.data)
+                    next = request.args.get('next')
+                    return redirect(next) if next else redirect(url_for('index'))
+                else:
+                    flash('錯誤的E-mail或密碼')
             else:
                 flash('錯誤的E-mail或密碼')
-        else:
-            flash('錯誤的E-mail或密碼')
     return render_template('login/login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('帳號已登出')
+    return redirect(url_for('login'))
+
+
+@app.route('/userinfo')
+@login_required
+def userinfo():
+    return render_template('member/userinfo.html')
+
+@app.route('/hello')
+def hello():
+    return render_template('login/successL.html')

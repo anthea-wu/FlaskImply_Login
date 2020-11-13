@@ -1,9 +1,10 @@
-from member import db, bcrypt
+from member import db, bcrypt, login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer
 from itsdangerous import SignatureExpired, BadSignature
 from flask import current_app
+from flask_login import UserMixin
 
-class UserRegister(db.Model):
+class UserRegister(UserMixin, db.Model):
     __tablename__ = 'UserRegister'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
@@ -39,5 +40,12 @@ class UserRegister(db.Model):
     def __repr__(self):
         return '帳號：{} email：{}'.format(self.username, self.email)
 
+@login_manager.user_loader
+def load_user(userID):
+    from member.setting.model import UserRegister
+    user = UserRegister.query.filter_by(id=userID).first()
+    if user:
+        return user
+    return None
 
 db.create_all()
